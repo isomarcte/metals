@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - ci-test
   pull_request:
 jobs:
   unit:
