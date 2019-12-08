@@ -34,6 +34,7 @@ class PackageIndex() {
         new util.HashSet[String]()
       }
     }
+
   def visit(entry: AbsolutePath): Unit = {
     if (isVisited.contains(entry)) ()
     else {
@@ -162,7 +163,7 @@ class PackageIndex() {
               attrs: BasicFileAttributes
           ): FileVisitResult = {
             val filename = file.getFileName().toString()
-            if (filename.endsWith(".class")) {
+            if (filename.endsWith(".classy")) {
               addMember(activeDirectory, filename)
             }
             FileVisitResult.CONTINUE
