@@ -148,14 +148,16 @@ class PackageIndex() {
           override def preVisitDirectory(
               dir: Path,
               attrs: BasicFileAttributes
-          ): FileVisitResult =
-            activeDirectory =
-              module.relativize(dir).iterator().asScala.mkString("", "/", "/")
-            if (CompressedPackageIndex.isExcludedPackage(activeDirectory)) {
+          ): FileVisitResult = {
+            val activeDirectory =
+              module.relativize(dir)
+            if (CompressedPackageIndex.isExcludedPackageByPath(activeDirectory)) {
               FileVisitResult.SKIP_SUBTREE
             } else {
               FileVisitResult.CONTINUE
             }
+          }
+
           override def visitFile(
               file: Path,
               attrs: BasicFileAttributes

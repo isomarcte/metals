@@ -1,7 +1,8 @@
 package scala.meta.internal.metals
 
-import scala.meta.internal.jdk.CollectionConverters._
+import java.nio.file._
 import java.{util => ju}
+import scala.meta.internal.jdk.CollectionConverters._
 
 /**
  * The memory-compressed version of PackageIndex.
@@ -36,22 +37,21 @@ object CompressedPackageIndex {
       Paths.get("jdk"),
       Paths.get("sun"),
       Paths.get("javax"),
-      Paths"oracle",
-      "java/awt/desktop/",
-    "org/jcp/",
-    "org/omg/",
-    "org/graalvm/",
-    "com/oracle/",
-    "com/sun/",
-    "com/apple/",
-    "apple/")
+      Paths.get("oracle"),
+      Paths.get("java", "awt", "desktop"),
+      Paths.get("org", "jcp"),
+      Paths.get("org", "omg"),
+      Paths.get("org", "graalvm"),
+      Paths.get("com", "oracle"),
+      Paths.get("com", "sun"),
+      Paths.get("com", "apple"),
+      Paths.get("apple")
+    )
 
-  def isExcludedPackage(pkg: String): Boolean = {
-    // NOTE(olafur) At some point we may consider making this list configurable, I can
-    // imagine that some people wouldn't mind excluding more packages or including for
-    // example javax._.
-
-  }
+  def isExcludedPackageByPath(pkg: Path): Boolean =
+    this.defaultExcludedPackageSet.exists((exclusion: Path) =>
+      pkg.startsWith(exclusion)
+    )
 
   def isExcludedPackage(pkg: String): Boolean = {
     // NOTE(olafur) At some point we may consider making this list configurable, I can
