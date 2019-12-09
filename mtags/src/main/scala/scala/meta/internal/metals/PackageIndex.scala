@@ -26,12 +26,12 @@ import java.net.URI
  */
 class PackageIndex() {
   val logger: Logger = Logger.getLogger(classOf[PackageIndex].getName)
-  val packages = new util.HashMap[String, util.Set[String]]()
+  val packages = new util.HashMap[Path, util.Set[Path]]()
   private val isVisited = new util.HashSet[AbsolutePath]()
   private val enterPackage =
-    new util.function.Function[String, util.HashSet[String]] {
-      override def apply(t: String): util.HashSet[String] = {
-        new util.HashSet[String]()
+    new util.function.Function[String, util.HashSet[Path]] {
+      override def apply(t: String): util.HashSet[Path] = {
+        new util.HashSet[Path]()
       }
     }
 
@@ -52,8 +52,8 @@ class PackageIndex() {
     }
   }
 
-  def addMember(pkg: String, member: String): Unit = {
-    if (!member.contains("module-info.class")) {
+  def addMember(pkg: Path, member: Path): Unit = {
+    if (!member.endsWith("module-info.class")) {
       val members = packages.computeIfAbsent(pkg, enterPackage)
       members.add(member)
     }
@@ -67,11 +67,11 @@ class PackageIndex() {
             file: Path,
             attrs: BasicFileAttributes
         ): FileVisitResult = {
-          val member = file.getFileName.toString
-          if (member.endsWith(".class")) {
+          val fileName: Path = file.getFileName()
+          if (fileName.toString.endsWith(".class")) {
             val relpath = AbsolutePath(file.getParent).toRelative(dir)
             val pkg = relpath.toURI(isDirectory = true).toString
-            addMember(pkg, member)
+            addMember(pkg, fileName)
           }
           FileVisitResult.CONTINUE
         }
@@ -98,7 +98,7 @@ class PackageIndex() {
           element.getName.endsWith(".class")) {
           val pkg = PathIO.dirname(element.getName)
           val member = PathIO.basename(element.getName)
-          addMember(pkg, member)
+          addMember(pkg, Paths.get(member))
         }
       }
       val manifest = jar.getManifest
@@ -151,7 +151,7 @@ class PackageIndex() {
           ): FileVisitResult = {
             val activeDirectory =
               module.relativize(dir)
-            if (CompressedPackageIndex.isExcludedPackageByPath(activeDirectory)) {
+            if (CompressedPackageIndex.isExcludedPackage(activeDirectory)) {
               FileVisitResult.SKIP_SUBTREE
             } else {
               FileVisitResult.CONTINUE
@@ -162,8 +162,8 @@ class PackageIndex() {
               file: Path,
               attrs: BasicFileAttributes
           ): FileVisitResult =
-            if (file.endsWith(".class")) {
-              addMember(file.getParent().toString, file.toString)
+            if (file.toString.endsWith(".class")) {
+              addMember(file.getParent().toString, file)
               FileVisitResult.CONTINUE
             } else {
               FileVisitResult.CONTINUE
