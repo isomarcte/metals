@@ -145,11 +145,10 @@ class PackageIndex() {
       Files.walkFileTree(
         module,
         new SimpleFileVisitor[Path] {
-          private var activeDirectory: String = ""
           override def preVisitDirectory(
               dir: Path,
               attrs: BasicFileAttributes
-          ): FileVisitResult = {
+          ): FileVisitResult =
             activeDirectory =
               module.relativize(dir).iterator().asScala.mkString("", "/", "/")
             if (CompressedPackageIndex.isExcludedPackage(activeDirectory)) {
@@ -157,17 +156,16 @@ class PackageIndex() {
             } else {
               FileVisitResult.CONTINUE
             }
-          }
           override def visitFile(
               file: Path,
               attrs: BasicFileAttributes
-          ): FileVisitResult = {
-            val filename = file.getFileName().toString()
-            if (filename.endsWith(".classy")) {
-              addMember(activeDirectory, filename)
+          ): FileVisitResult =
+            if (file.endsWith(".class")) {
+              addMember(file.getParent().toString, file.toString)
+              FileVisitResult.CONTINUE
+            } else {
+              FileVisitResult.CONTINUE
             }
-            FileVisitResult.CONTINUE
-          }
         }
       )
     }

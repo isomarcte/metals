@@ -28,6 +28,31 @@ case class CompressedPackageIndex(
 }
 
 object CompressedPackageIndex {
+  val defaultExcludedPackageSet: Set[Path] =
+    Set(
+      Paths.get("META-INF"),
+      Paths.get("images"),
+      Paths.get("toolbarButtonGraphics"),
+      Paths.get("jdk"),
+      Paths.get("sun"),
+      Paths.get("javax"),
+      Paths"oracle",
+      "java/awt/desktop/",
+    "org/jcp/",
+    "org/omg/",
+    "org/graalvm/",
+    "com/oracle/",
+    "com/sun/",
+    "com/apple/",
+    "apple/")
+
+  def isExcludedPackage(pkg: String): Boolean = {
+    // NOTE(olafur) At some point we may consider making this list configurable, I can
+    // imagine that some people wouldn't mind excluding more packages or including for
+    // example javax._.
+
+  }
+
   def isExcludedPackage(pkg: String): Boolean = {
     // NOTE(olafur) At some point we may consider making this list configurable, I can
     // imagine that some people wouldn't mind excluding more packages or including for
