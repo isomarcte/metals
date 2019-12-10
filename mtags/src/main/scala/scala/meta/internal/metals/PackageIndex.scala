@@ -29,7 +29,7 @@ class PackageIndex() {
   val packages = new util.HashMap[Path, util.Set[Path]]()
   private val isVisited = new util.HashSet[AbsolutePath]()
   private val enterPackage =
-    new util.function.Function[String, util.HashSet[Path]] {
+    new util.function.Function[Path, util.HashSet[Path]] {
       override def apply(t: String): util.HashSet[Path] = {
         new util.HashSet[Path]()
       }

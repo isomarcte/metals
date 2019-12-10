@@ -15,7 +15,7 @@ import scala.meta.internal.jdk.CollectionConverters._
  *   for this package.
  */
 case class CompressedPackageIndex(
-    packages: Array[String],
+    packages: Array[Path],
     bloom: StringBloomFilter,
     memberBytes: Array[Byte]
 ) {
@@ -110,7 +110,7 @@ object CompressedPackageIndex {
     // The current pending package names and classfile names to be compressed.
     val members = new ju.ArrayList[ClasspathElementPart]()
     // The current pending package names that are kept uncompressed.
-    val bufPackages = Array.newBuilder[String]
+    val bufPackages = Array.newBuilder[Path]
     // The bloom filter representing the set of all the possible queries that match
     // a classfile in the current pending bucket.
     var bucket = new StringBloomFilter(bucketSize)
@@ -130,7 +130,7 @@ object CompressedPackageIndex {
     }
 
     // Record the start of a new package.
-    def enterPackage(pkg: String): Unit = {
+    def enterPackage(pkg: Path): Unit = {
       bufPackages += pkg
       members.add(PackageElementPart(pkg))
       Fuzzy.bloomFilterSymbolStrings(pkg, bucket)

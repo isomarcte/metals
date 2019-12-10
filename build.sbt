@@ -158,7 +158,7 @@ lazy val V = new {
   // List of supported Scala versions in SemanticDB. Needs to be manually updated
   // for every SemanticDB upgrade.
   def supportedScalaVersions =
-    Seq("2.13.0", scala213, scala212) ++ deprecatedScalaVersions
+    Seq("2.13.0", scala213, scala212)
   def deprecatedScalaVersions = Seq("2.12.8", "2.12.9", scala211)
   def guava = "com.google.guava" % "guava" % "28.1-jre"
   def lsp4j = "org.eclipse.lsp4j" % "org.eclipse.lsp4j" % "0.8.1"
